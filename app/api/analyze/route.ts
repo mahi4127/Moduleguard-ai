@@ -57,9 +57,6 @@ Return ONLY a raw JSON object with no markdown, no code blocks, no explanation. 
     const data = await response.json();
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    console.log("RAW GEMINI RESPONSE:", rawText);
-    console.log("FULL DATA:", JSON.stringify(data));
-    
     // Extract JSON from anywhere in the response
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
