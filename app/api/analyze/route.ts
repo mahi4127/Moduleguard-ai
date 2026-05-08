@@ -23,20 +23,20 @@ export async function POST(req: NextRequest) {
     const prompt = `You are an enterprise learning quality assurance specialist. Compare the AI-generated training module against the source compliance document.
 
 SOURCE COMPLIANCE CONTENT:
-${sourceContent.slice(0, 6000)}
+${sourceContent.slice(0, 5000)}
 
 AI-GENERATED TRAINING MODULE:
-${generatedModule.slice(0, 6000)}
+${generatedModule.slice(0, 5000)}
 
-Evaluate and return ONLY valid JSON, no extra text:
+Return ONLY a raw JSON object with no markdown, no code blocks, no explanation. Just the JSON:
 {
-  "qualityScore": <number 0.0-10.0>,
-  "riskLevel": <"Low" or "Medium" or "High">,
-  "missingTopics": [<list of missing items>],
-  "hallucinations": [<list of wrong/unsupported claims>],
-  "readabilityFeedback": "<2-3 sentence paragraph>",
-  "recommendation": <"Approve" or "Needs Human Review" or "Reject">,
-  "summary": "<1-2 sentence executive summary>"
+  "qualityScore": 7.5,
+  "riskLevel": "Medium",
+  "missingTopics": ["topic 1", "topic 2"],
+  "hallucinations": ["wrong claim 1", "wrong claim 2"],
+  "readabilityFeedback": "Your feedback here.",
+  "recommendation": "Needs Human Review",
+  "summary": "One sentence summary."
 }`;
 
     const response = await fetch(
@@ -46,17 +46,29 @@ Evaluate and return ONLY valid JSON, no extra text:
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 1500 },
+          generationConfig: { 
+            temperature: 0.1, 
+            maxOutputTokens: 1500 
+          },
         }),
       }
     );
 
     const data = await response.json();
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const cleaned = rawText.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
-    const result = JSON.parse(cleaned);
-
+    
+    // Extract JSON from anywhere in the response
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return NextResponse.json(
+        { error: "Could not parse AI response. Please try again." },
+        { status: 500 }
+      );
+    }
+    
+    const result = JSON.parse(jsonMatch[0]);
     return NextResponse.json(result);
+
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
