@@ -27,7 +27,7 @@ Compare source compliance documents against AI-generated training modules to eva
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS v3 |
-| AI | Anthropic Claude (claude-sonnet-4) |
+| AI | Google Gemini 2.5 Flash |
 | Deploy | Vercel |
 
 ---
@@ -44,17 +44,13 @@ npm install
 
 ### 2. Configure Environment
 
-```bash
-cp .env.local.example .env.local
-```
-
-Open `.env.local` and add your Anthropic API key:
+Create a `.env.local` file in the project root and add your Google Gemini API key:
 
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=your-gemini-api-key
 ```
 
-Get your key at: https://console.anthropic.com/
+Get your key at: https://aistudio.google.com/apikey
 
 ### 3. Run Locally
 
@@ -80,11 +76,11 @@ npm i -g vercel
 vercel
 ```
 
-Add `ANTHROPIC_API_KEY` in your Vercel project settings under **Settings → Environment Variables**.
+Add `GEMINI_API_KEY` in your Vercel project settings under **Settings → Environment Variables**.
 
 Or use the Vercel dashboard:
 1. Import your GitHub repository
-2. Add `ANTHROPIC_API_KEY` environment variable
+2. Add `GEMINI_API_KEY` environment variable
 3. Deploy — done
 
 ---
@@ -115,7 +111,7 @@ moduleguard-ai/
 
 ## AI Evaluation Criteria
 
-The system prompt instructs Claude to evaluate:
+The system prompt instructs Gemini to evaluate:
 
 | Criterion | Description |
 |-----------|-------------|
@@ -140,7 +136,6 @@ The system prompt instructs Claude to evaluate:
 ## Notes
 
 - Content is processed in-memory — no database required
-- Inputs are truncated at 6,000 characters each for API efficiency
+- Inputs are truncated at 5,000 characters each for API efficiency
 - This tool assists human reviewers — always have a qualified compliance officer make final publishing decisions
 - The demo scenario uses an AML (Anti-Money Laundering) compliance use case
-
