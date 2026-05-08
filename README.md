@@ -144,8 +144,3 @@ The system prompt instructs Claude to evaluate:
 - This tool assists human reviewers — always have a qualified compliance officer make final publishing decisions
 - The demo scenario uses an AML (Anti-Money Laundering) compliance use case
 
----
-
-## License
-
-MIT — internal use recommended for compliance-sensitive applications.
