@@ -46,18 +46,30 @@ Return ONLY a raw JSON object with no markdown, no code blocks, no explanation. 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { 
-            temperature: 0.1, 
-            maxOutputTokens: 1500 
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 1500,
           },
         }),
       }
     );
 
     const data = await response.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    // Extract JSON from anywhere in the response
+    console.log("FULL DATA:", JSON.stringify(data));
+
+    const rawText =
+      data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    console.log("RAW GEMINI RESPONSE:", rawText);
+
+    if (!rawText) {
+      return NextResponse.json(
+        { error: `Gemini error: ${data.error?.message || "Empty response"}` },
+        { status: 500 }
+      );
+    }
+
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return NextResponse.json(
@@ -65,7 +77,7 @@ Return ONLY a raw JSON object with no markdown, no code blocks, no explanation. 
         { status: 500 }
       );
     }
-    
+
     const result = JSON.parse(jsonMatch[0]);
     return NextResponse.json(result);
 
