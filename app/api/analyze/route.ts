@@ -48,7 +48,7 @@ Return ONLY a raw JSON object with no markdown, no code blocks, no explanation. 
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.1,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 9000,
           },
         }),
       }
